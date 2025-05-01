@@ -5,14 +5,13 @@ let hands = [];
 let sound;
 let isMusicPlaying = false;
 let uploadScreen = true;
-let handposeModel = false;
 let uploadButton;
 let playButton;
+let canvas;
 
 function preload() {
   handPose = ml5.handPose({ flipped: false }, () =>{
     console.log('Modelo Handpose carregado!');
-    handposeModel = true;
   });
 }
 
@@ -25,9 +24,16 @@ function setup() {
 
   textAlign(CENTER);
   textSize(18);
+
+  setupUI();
+}
+
+function setupUI(){
+  const input = document.getElementById("file-input");
   
-  uploadButton = document.getElementById("file-input");
-  uploadButton.addEventListener('change', handleFileUpload);
+  uploadButton = document.getElementById("upload");
+  input.addEventListener('change', handleFileUpload);
+  uploadButton.style.display = 'flex';
   
   playButton = document.getElementById("play-button");
   playButton.onclick = bootStrap;
@@ -42,12 +48,12 @@ function handleFileUpload(event) {
     if (sound) {
       sound.stop();
     }
-    sound = loadSound(file, () => {
-      console.log('Som carregado com sucesso!');
 
+    sound = loadSound(file, () => {
       uploadButton.style.display = 'none';
       playButton.style.display = 'block';
     });
+
   } else {
     alert('Por favor, selecione um arquivo de áudio MP3');
   }
@@ -109,6 +115,7 @@ function draw() {
           if (sound && isMusicPlaying) {
               sound.rate(modify);
           }
+          
           drawHandLines({
             r: 0,
             g: 0,
