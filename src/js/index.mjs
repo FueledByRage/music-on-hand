@@ -1,13 +1,13 @@
-let video;
+import { View } from "./view.mjs";
+
 let handPose;
 let hands = [];
 
 let sound;
 let isMusicPlaying = false;
+let video;
 let uploadScreen = true;
-let uploadButton;
-let playButton;
-let canvas;
+let view;
 
 function preload() {
   handPose = ml5.handPose({ flipped: false }, () =>{
@@ -20,23 +20,7 @@ function gotHands(results) {
 }
 
 function setup() {
-  createCanvas(640, 480);
-
-  textAlign(CENTER);
-  textSize(18);
-
-  setupUI();
-}
-
-function setupUI(){
-  const input = document.getElementById("file-input");
-  
-  uploadButton = document.getElementById("upload");
-  input.addEventListener('change', handleFileUpload);
-  uploadButton.style.display = 'flex';
-  
-  playButton = document.getElementById("play-button");
-  playButton.onclick = bootStrap;
+  view = View.setUp().onUpload(handleFileUpload);
 }
 
 function handleFileUpload(event) {
@@ -50,8 +34,8 @@ function handleFileUpload(event) {
     }
 
     sound = loadSound(file, () => {
-      uploadButton.style.display = 'none';
-      playButton.style.display = 'block';
+      view.toFileUploaded();
+      view.onPlaying(bootStrap);
     });
 
   } else {
@@ -62,16 +46,14 @@ function handleFileUpload(event) {
 function bootStrap() {
   if (sound && !isMusicPlaying) {
     sound.play();
+
     isMusicPlaying = true;
   }
   
-  playButton.style.display = 'none';
+  view.toMusicPlaying();
   
   uploadScreen = false;
-  
-  video = createCapture(VIDEO);
-  video.size(width, height);
-  video.hide();
+  video = view.startVideo({ width: 640, height: 480 });
   
   handPose.detectStart(video, gotHands);
 }
@@ -83,7 +65,7 @@ function draw() {
     noStroke();
     text('Selecione um arquivo de música MP3', width/2, height/2 - 50);
     
-    if (sound && !playButton.style.display === 'none') {
+    if (sound && !isMusicPlaying) {
       text('Arquivo carregado! Clique para iniciar.', width/2, height/2 + 100);
     }
   } else {
