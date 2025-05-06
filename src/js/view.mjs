@@ -23,60 +23,61 @@ export class View {
     const input = document.getElementById("file-input");
     const uploadButton = document.getElementById("upload");
     const playButton = document.getElementById("play-button");
+    uploadButton.style.display = 'flex';
 
     return new View(input, uploadButton, playButton);
   }
 
   onUpload(handleUpload){
-    if(!input){
+    if(!this.input){
       throw new Error('Input element not set');
     }
 
-    input.addEventListener('change', handleUpload);
+    this.input.addEventListener('change', handleUpload);
 
     return this;
   }
 
   onPlaying(handlePlaying){
-    if(!playButton){
+    if(!this.playButton){
       throw new Error('Play button not set');
     }
 
-    playButton.onclick = handlePlaying;
+    this.playButton.onclick = handlePlaying;
 
     return this;
   }
 
   toPlaying(){
-    if(!playButton){
+    if(!this.playButton){
       throw new Error('Play button not set');
     }
 
-    playButton.style.display = 'none';
+    this.playButton.style.display = 'none';
   }
 
   toFileUploaded(){
-    if(!uploadButton){
+    if(!this.uploadButton){
       throw new Error('Upload button not set');
     }
 
-    uploadButton.style.display = 'none';
-    playButton.style.display = 'block';
+    this.uploadButton.style.display = 'none';
+    this.playButton.style.display = 'block';
   }
 
   toMusicPlaying(){
-    if(!playButton){
+    if(!this.playButton){
       throw new Error('Play button not set');
     }
 
-    playButton.style.display = 'none';
+    this.playButton.style.display = 'none';
   }
 
   startVideo(videoProps){
-    video = createCapture(VIDEO);
-    video.size(videoProps.width, videoProps.height);
-    video.hide();
+    this.video = createCapture(VIDEO);
+    this.video.size(videoProps.width, videoProps.height);
+    this.video.hide();
 
-    return video;
+    return this.video;
   }
 }
